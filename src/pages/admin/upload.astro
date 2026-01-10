@@ -1,0 +1,87 @@
+---
+import Layout from '../../components/Layout.astro';
+---
+
+<Layout title="ファイルインポート" isAdmin={true}>
+  <h1>ファイルインポート</h1>
+  
+  <div class="card">
+    <p class="mb-lg">
+      マークダウンファイル（.md）をインポートして日記を作成します。
+      フロントマター（YAML形式）でタイトルやタグを指定できます。
+    </p>
+    
+    <pre style="background: var(--color-bg); padding: var(--spacing-md); border-radius: var(--border-radius); font-size: 0.85rem; overflow-x: auto;">---
+title: 日記のタイトル
+tags: タグ1, タグ2
+status: draft または published
+---
+
+本文をここに書きます...</pre>
+  </div>
+  
+  <form id="upload-form" class="card mt-lg">
+    <div class="form-group">
+      <label for="file">マークダウンファイルを選択</label>
+      <input type="file" id="file" name="file" accept=".md" required />
+    </div>
+    
+    <div class="admin-actions">
+      <button type="submit" class="btn btn-primary">インポート</button>
+      <a href="/admin" class="btn btn-secondary">キャンセル</a>
+    </div>
+  </form>
+  
+  <div id="result" class="mt-lg" style="display: none;"></div>
+</Layout>
+
+<script>
+  const form = document.getElementById('upload-form') as HTMLFormElement;
+  const resultDiv = document.getElementById('result') as HTMLDivElement;
+  
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const fileInput = document.getElementById('file') as HTMLInputElement;
+    const file = fileInput.files?.[0];
+    
+    if (!file) {
+      alert('ファイルを選択してください。');
+      return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const response = await fetch('/api/import', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        resultDiv.innerHTML = `
+          <div class="card" style="background: #dcfce7; border-color: #16a34a;">
+            <p style="color: #16a34a; font-weight: 500;">インポートが完了しました！</p>
+            <p class="mt-md">
+              <a href="/admin" class="btn btn-primary">管理画面へ戻る</a>
+            </p>
+          </div>
+        `;
+        resultDiv.style.display = 'block';
+        form.style.display = 'none';
+      } else {
+        resultDiv.innerHTML = `
+          <div class="card" style="background: #fee2e2; border-color: #dc2626;">
+            <p style="color: #dc2626; font-weight: 500;">エラー: ${result.error}</p>
+          </div>
+        `;
+        resultDiv.style.display = 'block';
+      }
+    } catch (error) {
+      alert('インポートに失敗しました。');
+    }
+  });
+</script>

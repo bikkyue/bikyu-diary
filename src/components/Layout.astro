@@ -1,0 +1,42 @@
+---
+export interface Props {
+  title: string;
+  isAdmin?: boolean;
+}
+
+const { title, isAdmin = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | Diary</title>
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <a href="/" class="site-title">Diary</a>
+        <nav>
+          <a href="/">日記一覧</a>
+          <a href="/tags">タグ</a>
+          {isAdmin && <a href="/admin">管理画面</a>}
+        </nav>
+      </div>
+    </header>
+    
+    <main>
+      <div class="container">
+        <slot />
+      </div>
+    </main>
+    
+    <footer>
+      <div class="container">
+        <p>&copy; {new Date().getFullYear()} Diary</p>
+      </div>
+    </footer>
+  </body>
+</html>
