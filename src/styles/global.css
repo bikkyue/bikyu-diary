@@ -12,7 +12,7 @@
   --color-primary-hover: #1d4ed8;
   --color-danger: #dc2626;
   --color-success: #16a34a;
-  
+
   /* スペーシング */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -20,11 +20,11 @@
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
-  
+
   /* フォント */
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
-  
+
   /* その他 */
   --max-width: 800px;
   --border-radius: 8px;
@@ -32,7 +32,9 @@
 }
 
 /* リセット */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -113,15 +115,26 @@ footer {
 }
 
 /* タイポグラフィ */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-weight: 600;
   line-height: 1.3;
   margin-bottom: var(--spacing-md);
 }
 
-h1 { font-size: 2rem; }
-h2 { font-size: 1.5rem; }
-h3 { font-size: 1.25rem; }
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
 
 p {
   margin-bottom: var(--spacing-md);
@@ -311,7 +324,7 @@ textarea {
   font-size: 0.9em;
 }
 
-.markdown-content :not(pre) > code {
+.markdown-content :not(pre)>code {
   background: var(--color-bg);
   padding: 0.2em 0.4em;
   border-radius: 4px;
@@ -359,6 +372,23 @@ textarea {
   color: #d97706;
 }
 
+/* 日記詳細ヘッダー */
+.diary-detail-header {
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-xl);
+  padding-left: 1em;
+  border-left: 2px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.diary-detail-header h1 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.diary-detail-header .card-meta {
+  margin-bottom: var(--spacing-sm);
+}
+
 /* 管理画面 */
 .admin-header {
   display: flex;
@@ -373,43 +403,67 @@ textarea {
 }
 
 /* ユーティリティ */
-.text-center { text-align: center; }
-.text-secondary { color: var(--color-text-secondary); }
-.mt-md { margin-top: var(--spacing-md); }
-.mt-lg { margin-top: var(--spacing-lg); }
-.mb-md { margin-bottom: var(--spacing-md); }
-.mb-lg { margin-bottom: var(--spacing-lg); }
+.text-center {
+  text-align: center;
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.mt-md {
+  margin-top: var(--spacing-md);
+}
+
+.mt-lg {
+  margin-top: var(--spacing-lg);
+}
+
+.mb-md {
+  margin-bottom: var(--spacing-md);
+}
+
+.mb-lg {
+  margin-bottom: var(--spacing-lg);
+}
 
 /* レスポンシブ */
 @media (max-width: 768px) {
-  html { font-size: 15px; }
-  
+  html {
+    font-size: 15px;
+  }
+
   .container {
     padding: 0 var(--spacing-md);
   }
-  
-  h1 { font-size: 1.75rem; }
-  h2 { font-size: 1.35rem; }
-  
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.35rem;
+  }
+
   header .container {
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-  
+
   nav a {
     margin-left: var(--spacing-md);
   }
-  
+
   nav a:first-child {
     margin-left: 0;
   }
-  
+
   .admin-header {
     flex-direction: column;
     gap: var(--spacing-md);
     align-items: flex-start;
   }
-  
+
   .card-meta {
     flex-direction: column;
     gap: var(--spacing-xs);

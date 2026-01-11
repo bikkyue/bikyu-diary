@@ -44,7 +44,7 @@ const htmlContent = diary ? parseMarkdown(diary.content) : '';
   
   {diary && (
     <article>
-      <header class="mb-lg">
+      <header class="diary-detail-header">
         <h1>{diary.title}</h1>
         <div class="card-meta">
           <span>{formatDate(diary.created_at)}</span>

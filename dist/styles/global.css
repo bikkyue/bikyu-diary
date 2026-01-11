@@ -369,6 +369,23 @@ textarea {
   color: #d97706;
 }
 
+/* 日記詳細ヘッダー */
+.diary-detail-header {
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-xl);
+  padding-left: 1em;
+  border-left: 2px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.diary-detail-header h1 {
+  margin-bottom: var(--spacing-sm);
+}
+
+.diary-detail-header .card-meta {
+  margin-bottom: var(--spacing-sm);
+}
+
 /* 管理画面 */
 .admin-header {
   display: flex;
