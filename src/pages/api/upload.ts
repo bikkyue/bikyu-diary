@@ -23,6 +23,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
             });
         }
 
+        // ファイル形式のバリデーション
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            return new Response(JSON.stringify({ error: 'jpg, png, gif, webp のみアップロードできます' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
         // ファイル名をユニークにする
         const timestamp = Date.now();
         const ext = file.name.split('.').pop() || '';
