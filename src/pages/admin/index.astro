@@ -45,7 +45,7 @@ if (db) {
       <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--spacing-md);">
         <div style="flex: 1;">
           <h3 class="card-title" style="margin-bottom: var(--spacing-sm);">
-            <a href={`/diary/${diary.id}`}>{diary.title}</a>
+            <a href={`/${diary.id}`}>{diary.title}</a>
           </h3>
           <div class="card-meta">
             <span>{new Date(diary.created_at).toLocaleDateString('ja-JP')}</span>
