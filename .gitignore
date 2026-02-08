@@ -1,11 +1,3 @@
-# Dependencies
-node_modules/
-
-# Build outputs
-dist/
-
-# Astro
-.astro/
 
 # Wrangler (Cloudflare)
 .wrangler/
