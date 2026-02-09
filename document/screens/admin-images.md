@@ -30,8 +30,8 @@
 
 #### アップロード結果（成功時に表示）
 - アップロードされた画像のプレビュー
-- URLコピーボタン（例: `/images/123.jpg`）
-- マークダウンコピーボタン（例: `![](/images/123.jpg)`）
+- URLコピーボタン（例: `https://r2diary.bikyu.dev/images/2026021000250001.jpg`）
+- マークダウンコピーボタン（例: `![](https://r2diary.bikyu.dev/images/2026021000250001.jpg)`）
 
 #### 画像一覧
 - アップロード済み画像をサムネイルで一覧表示
@@ -54,11 +54,11 @@
 
 ### URLコピー
 1. 「URLコピー」ボタンをクリック
-2. `/images/{timestamp}.{拡張子}` 形式でクリップボードにコピー
+2. `https://r2diary.bikyu.dev/images/{timestamp}.{拡張子}` 形式でクリップボードにコピー
 
 ### マークダウンコピー
 1. 「マークダウンコピー」ボタンをクリック
-2. `![](/images/{timestamp}.{拡張子})` 形式でクリップボードにコピー
+2. `![](https://r2diary.bikyu.dev/images/{timestamp}.{拡張子})` 形式でクリップボードにコピー
 
 ### 削除
 1. 「削除」ボタンをクリック
@@ -98,7 +98,7 @@
   "images": [
     {
       "key": "images/1234567890.jpg",
-      "url": "/images/1234567890.jpg",
+      "url": "https://r2diary.bikyu.dev/images/1234567890.jpg",
       "size": 123456,
       "uploaded": "2025-01-01T00:00:00.000Z"
     }
@@ -135,12 +135,12 @@
 | ファイル | `src/pages/api/upload.ts` |
 | 改修内容 | ファイル形式のバリデーション追加 |
 
-## 実装対象ファイル
+## 関連ファイル
 
-| ファイル | 種別 | 説明 |
-|---------|------|------|
-| `src/pages/admin/images.astro` | 新規 | 画像アップロード画面 |
-| `src/pages/api/images.ts` | 新規 | 画像一覧取得API |
-| `src/pages/api/images/[...key].ts` | 新規 | 画像削除API |
-| `src/pages/api/upload.ts` | 改修 | ファイル形式バリデーション追加 |
-| `src/pages/admin/index.astro` | 改修 | 「画像アップロード」ボタン追加 |
+| ファイル | 説明 |
+|---------|------|
+| `src/pages/admin/images.astro` | 画像アップロード画面 |
+| `src/pages/api/images.ts` | 画像一覧取得API |
+| `src/pages/api/images/[...key].ts` | 画像削除API |
+| `src/pages/api/upload.ts` | 画像アップロードAPI |
+| `src/pages/admin/index.astro` | 管理画面トップ（「画像アップロード」ボタン） |
