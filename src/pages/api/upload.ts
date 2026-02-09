@@ -61,7 +61,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         });
 
         // R2パブリックドメインで絶対URLを生成
-        const imageUrl = `https://diary.r2.bikyu.dev/${key}`;
+        const imageUrl = `https://r2diary.bikyu.dev/${key}`;
 
         return new Response(JSON.stringify({ url: imageUrl, key }), {
             status: 201,
