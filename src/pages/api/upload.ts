@@ -32,10 +32,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
             });
         }
 
-        // ファイル名をユニークにする
-        const timestamp = Date.now();
-        const ext = file.name.split('.').pop() || '';
-        const key = `images/${timestamp}.${ext}`;
+        // ファイル名を生成（yyyymmddHHMMSS + 2桁の採番）- 日本時間
+        const now = new Date();
+        // 日本時間に変換（UTC+9）
+        const jstOffset = 9 * 60 * 60 * 1000;
+        const jst = new Date(now.getTime() + jstOffset);
+        const dateStr = jst.getUTCFullYear().toString() +
+            String(jst.getUTCMonth() + 1).padStart(2, '0') +
+            String(jst.getUTCDate()).padStart(2, '0') +
+            String(jst.getUTCHours()).padStart(2, '0') +
+            String(jst.getUTCMinutes()).padStart(2, '0') +
+            String(jst.getUTCSeconds()).padStart(2, '0');
+
+        // indexパラメータを取得（デフォルトは01）
+        const reqUrl = new URL(request.url);
+        const indexParam = reqUrl.searchParams.get('index') || '1';
+        const index = String(parseInt(indexParam, 10)).padStart(2, '0');
+
+        const ext = file.name.split('.').pop()?.toLowerCase() || '';
+        const key = `images/${dateStr}${index}.${ext}`;
 
         // R2にアップロード
         const arrayBuffer = await file.arrayBuffer();
@@ -45,11 +60,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
             }
         });
 
-        // 公開URLを生成（Cloudflare Pagesのパブリックアクセス前提）
-        // 実際のURLはデプロイ後に調整が必要な場合があります
-        const url = `/${key}`;
+        // R2パブリックドメインで絶対URLを生成
+        const imageUrl = `https://diary.bikyu.dev/${key}`;
 
-        return new Response(JSON.stringify({ url, key }), {
+        return new Response(JSON.stringify({ url: imageUrl, key }), {
             status: 201,
             headers: { 'Content-Type': 'application/json' }
         });

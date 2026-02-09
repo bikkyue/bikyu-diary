@@ -12,6 +12,10 @@
       "ES2022",
       "DOM"
     ],
-    "target": "ES2022"
+    "target": "ES2022",
+    "moduleResolution": "bundler",
+    "types": [
+      "@cloudflare/workers-types"
+    ]
   }
 }
