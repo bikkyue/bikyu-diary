@@ -22,7 +22,7 @@ export const GET: APIRoute = async ({ locals }) => {
             .slice(0, 6)
             .map(obj => ({
                 key: obj.key,
-                url: `https://diary.bikyu.dev/${obj.key}`,
+                url: `https://diary.r2.bikyu.dev/${obj.key}`,
                 size: obj.size,
                 uploaded: obj.uploaded.toISOString()
             }));
