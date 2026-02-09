@@ -25,6 +25,7 @@ if (db) {
     <div class="admin-actions">
       <a href="/admin/new" class="btn btn-primary">+ 新規作成</a>
       <a href="/admin/upload" class="btn btn-secondary">ファイルインポート</a>
+      <a href="/admin/images" class="btn btn-secondary">画像アップロード</a>
     </div>
   </div>
   
@@ -45,7 +46,7 @@ if (db) {
       <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--spacing-md);">
         <div style="flex: 1;">
           <h3 class="card-title" style="margin-bottom: var(--spacing-sm);">
-            <a href={`/diary/${diary.id}`}>{diary.title}</a>
+            <a href={`/${diary.id}`}>{diary.title}</a>
           </h3>
           <div class="card-meta">
             <span>{new Date(diary.created_at).toLocaleDateString('ja-JP')}</span>

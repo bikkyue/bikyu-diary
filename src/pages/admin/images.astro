@@ -1,0 +1,355 @@
+---
+import Layout from '../../components/Layout.astro';
+
+const runtime = Astro.locals.runtime;
+const bucket = runtime?.env?.BUCKET;
+
+if (!bucket) {
+  return Astro.redirect('/admin');
+}
+---
+
+<Layout title="画像アップロード" isAdmin={true}>
+  <div class="card">
+    <h1>画像アップロード</h1>
+    
+    <div id="dropZone" class="drop-zone">
+      <div class="drop-zone-content">
+        <svg class="drop-zone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p class="drop-zone-text">ここに画像をドラッグ＆ドロップ</p>
+        <p class="drop-zone-hint">または</p>
+        <label class="btn btn-secondary drop-zone-button">
+          ファイルを選択
+          <input type="file" id="file" accept=".jpg,.jpeg,.png,.gif,.webp" multiple hidden />
+        </label>
+      </div>
+      <div class="drop-zone-uploading" style="display: none;">
+        <p id="uploadProgress">アップロード中...</p>
+      </div>
+    </div>
+    
+    <div id="uploadResult" style="display: none; margin-top: var(--spacing-lg);">
+      <h3>アップロード成功</h3>
+      <img id="uploadedImage" style="max-width: 300px; border-radius: var(--border-radius); margin: var(--spacing-md) 0;" />
+      <div style="display: flex; gap: var(--spacing-sm);">
+        <button type="button" id="copyUrl" class="btn btn-secondary">URLコピー</button>
+        <button type="button" id="copyMarkdown" class="btn btn-secondary">マークダウンコピー</button>
+      </div>
+    </div>
+    
+    <div id="error" class="error" style="display: none; margin-top: var(--spacing-md);"></div>
+  </div>
+  
+  <div class="card" style="margin-top: var(--spacing-lg);">
+    <h2>アップロード済み画像</h2>
+    <div id="imageGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--spacing-md); margin-top: var(--spacing-md);">
+      <!-- 画像一覧がここに表示されます -->
+    </div>
+  </div>
+  
+  <div style="margin-top: var(--spacing-lg); text-align: center;">
+    <a href="https://dash.cloudflare.com/ae23774604a12acf7034ad257713ca76/r2/default/buckets/diary-images" target="_blank" rel="noopener noreferrer" class="text-secondary" style="font-size: 0.875rem;">
+      R2 ダッシュボード →
+    </a>
+  </div>
+</Layout>
+
+<style>
+  .drop-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-xl);
+    text-align: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .drop-zone:hover,
+  .drop-zone.drag-over {
+    border-color: var(--primary-color);
+    background: rgba(59, 130, 246, 0.05);
+  }
+  
+  .drop-zone-icon {
+    width: 48px;
+    height: 48px;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .drop-zone-text {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-sm) 0;
+  }
+  
+  .drop-zone-hint {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0 0 var(--spacing-md) 0;
+  }
+  
+  .drop-zone-button {
+    cursor: pointer;
+  }
+  
+  .drop-zone-uploading {
+    color: var(--text-secondary);
+  }
+
+  :global(.image-item) {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    overflow: hidden;
+  }
+  
+  :global(.image-item img) {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+  }
+  
+  :global(.image-actions) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  :global(.image-actions button) {
+    font-size: 0.875rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .error {
+    color: #e74c3c;
+    padding: var(--spacing-sm);
+    background: #fee;
+    border-radius: var(--border-radius);
+  }
+</style>
+
+<script>
+  let uploadedUrl = '';
+  
+  // 画像一覧を読み込み
+  async function loadImages() {
+    try {
+      const response = await fetch('/api/images');
+      const data = await response.json();
+      
+      const grid = document.getElementById('imageGrid');
+      if (!grid) return;
+      
+      if (data.images.length === 0) {
+        grid.innerHTML = '<p class="text-secondary">まだ画像がありません。</p>';
+        return;
+      }
+      
+      grid.innerHTML = data.images.map((img: any) => `
+        <div class="image-item">
+          <img src="${img.url}" alt="Uploaded image" />
+          <div class="image-actions">
+            <button type="button" class="btn btn-secondary" onclick="copyToClipboard('${img.url}')">URLコピー</button>
+            <button type="button" class="btn btn-secondary" onclick="copyToClipboard('![](${img.url})')">マークダウンコピー</button>
+            <button type="button" class="btn btn-danger" onclick="deleteImage('${img.key}')">削除</button>
+          </div>
+        </div>
+      `).join('');
+    } catch (error) {
+      console.error('Failed to load images:', error);
+    }
+  }
+  
+  // ドラッグアンドドロップ処理
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('file') as HTMLInputElement;
+  const dropContent = dropZone?.querySelector('.drop-zone-content') as HTMLElement;
+  const dropUploading = dropZone?.querySelector('.drop-zone-uploading') as HTMLElement;
+  
+  // ドラッグオーバー
+  dropZone?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+  
+  // ドラッグリーブ
+  dropZone?.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+  });
+  
+  // ドロップ
+  dropZone?.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    
+    const files = (e as DragEvent).dataTransfer?.files;
+    if (files && files.length > 0) {
+      await uploadFiles(Array.from(files));
+    }
+  });
+  
+  // ファイル選択
+  fileInput?.addEventListener('change', async () => {
+    const files = fileInput.files;
+    if (files && files.length > 0) {
+      await uploadFiles(Array.from(files));
+      fileInput.value = '';
+    }
+  });
+  
+  // 複数ファイルアップロード
+  async function uploadFiles(files: File[]) {
+    const uploadProgress = document.getElementById('uploadProgress');
+    
+    // UI更新
+    if (dropContent) dropContent.style.display = 'none';
+    if (dropUploading) dropUploading.style.display = 'block';
+    
+    let successCount = 0;
+    let errorCount = 0;
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (uploadProgress) {
+        uploadProgress.textContent = `アップロード中... (${i + 1}/${files.length})`;
+      }
+      
+      const success = await uploadSingleFile(file, i + 1);
+      if (success) {
+        successCount++;
+      } else {
+        errorCount++;
+      }
+    }
+    
+    // UI復元
+    if (dropContent) dropContent.style.display = 'block';
+    if (dropUploading) dropUploading.style.display = 'none';
+    
+    // 画像一覧を更新
+    await loadImages();
+    
+    if (errorCount > 0) {
+      showError(`${successCount}件成功、${errorCount}件失敗`);
+    } else {
+      hideError();
+    }
+  }
+  
+  // 単一ファイルアップロード
+  async function uploadSingleFile(file: File, index: number = 1): Promise<boolean> {
+    // ファイル形式チェック
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      return false;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const response = await fetch(`/api/upload?index=${index}`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        return false;
+      }
+      
+      uploadedUrl = data.url;
+      
+      // アップロード結果を表示（最後のファイル）
+      const resultDiv = document.getElementById('uploadResult');
+      const uploadedImage = document.getElementById('uploadedImage') as HTMLImageElement;
+      
+      if (resultDiv && uploadedImage) {
+        uploadedImage.src = data.url;
+        resultDiv.style.display = 'block';
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Upload error:', error);
+      return false;
+    }
+  }
+  
+  // URLコピー
+  document.getElementById('copyUrl')?.addEventListener('click', () => {
+    copyToClipboard(uploadedUrl);
+  });
+  
+  // マークダウンコピー
+  document.getElementById('copyMarkdown')?.addEventListener('click', () => {
+    copyToClipboard(`![](${uploadedUrl})`);
+  });
+  
+  // クリップボードにコピー
+  (window as any).copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('コピーしました');
+    } catch (error) {
+      console.error('Copy failed:', error);
+      alert('コピーに失敗しました');
+    }
+  };
+  
+  // 画像削除
+  (window as any).deleteImage = async (key: string) => {
+    if (!confirm('この画像を削除しますか？')) {
+      return;
+    }
+    
+    try {
+      // keyには既に 'images/' プレフィックスが含まれているので、/api/ に直接追加
+      const response = await fetch(`/api/${key}`, {
+        method: 'DELETE'
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        showError(data.error || '削除に失敗しました');
+        return;
+      }
+      
+      await loadImages();
+      hideError();
+    } catch (error) {
+      showError('削除に失敗しました');
+      console.error('Delete error:', error);
+    }
+  };
+  
+  function showError(message: string) {
+    const errorDiv = document.getElementById('error');
+    if (errorDiv) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+  }
+  
+  function hideError() {
+    const errorDiv = document.getElementById('error');
+    if (errorDiv) {
+      errorDiv.style.display = 'none';
+    }
+  }
+  
+  // 初期読み込み
+  loadImages();
+</script>

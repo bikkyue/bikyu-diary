@@ -2,9 +2,12 @@
 export interface Props {
   title: string;
   isAdmin?: boolean;
+  ogTitle?: string;
+  ogUrl?: string;
+  ogType?: string;
 }
 
-const { title, isAdmin = false } = Astro.props;
+const { title, isAdmin = false, ogTitle, ogUrl, ogType } = Astro.props;
 ---
 
 <!doctype html>
@@ -14,6 +17,17 @@ const { title, isAdmin = false } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title} | Diary</title>
     <link rel="stylesheet" href="/styles/global.css" />
+
+    {ogTitle && ogUrl && ogType && (
+      <>
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:url" content={ogUrl} />
+        <meta property="og:type" content={ogType} />
+        <meta property="og:site_name" content="Diary" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={ogTitle} />
+      </>
+    )}
   </head>
   <body>
     <header>

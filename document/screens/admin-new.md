@@ -26,7 +26,7 @@
 | タイトル | text | ○ | 日記のタイトル |
 | 本文 | textarea | ○ | マークダウン形式 |
 | タグ | text | - | カンマ区切りで入力 |
-| サムネイルURL | text | - | 画像URL |
+| サムネイルURL | text | - | 画像URL（[画像機能仕様](../features/images.md)参照） |
 | 公開状態 | select | ○ | 下書き / 公開 |
 
 #### ボタン
