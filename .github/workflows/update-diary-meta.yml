@@ -1,0 +1,103 @@
+name: Update Diary Metadata
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/content/diaries/**.md'
+
+jobs:
+  update-meta:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update diaries.json
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+
+          const jsonPath = 'src/content/diaries.json';
+          const diariesDir = 'src/content/diaries';
+
+          const oldMeta = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+
+          // 再帰的に .md ファイルを収集
+          function walkDir(dir, base) {
+            let results = [];
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+              const full = path.join(dir, entry.name);
+              if (entry.isDirectory()) {
+                results = results.concat(walkDir(full, base));
+              } else if (entry.name.endsWith('.md')) {
+                results.push(path.relative(base, full));
+              }
+            }
+            return results;
+          }
+
+          const files = walkDir(diariesDir, diariesDir).sort();
+
+          // ファイル名 → 日付のルックアップ（移動対応）
+          const filenameToDate = {};
+          for (const [key, value] of Object.entries(oldMeta)) {
+            const basename = key.split('/').pop();
+            if (!filenameToDate[basename]) {
+              filenameToDate[basename] = value;
+            }
+          }
+
+          // JST で現在時刻（YYYY-MM-DD HH:mm:ss）
+          const now = new Date();
+          const jstOffset = 9 * 60 * 60 * 1000;
+          const jst = new Date(now.getTime() + jstOffset);
+          const pad = (n) => String(n).padStart(2, '0');
+          const createdAt = jst.getUTCFullYear() + '-' + pad(jst.getUTCMonth() + 1) + '-' + pad(jst.getUTCDate()) + ' ' + pad(jst.getUTCHours()) + ':' + pad(jst.getUTCMinutes()) + ':' + pad(jst.getUTCSeconds());
+
+          // 新しいメタデータを構築
+          const newMeta = {};
+          let changed = false;
+
+          for (const file of files) {
+            if (oldMeta[file] !== undefined) {
+              newMeta[file] = oldMeta[file];
+            } else {
+              const basename = file.split('/').pop();
+              if (filenameToDate[basename]) {
+                newMeta[file] = filenameToDate[basename];
+                console.log('Moved (date preserved):', file);
+                changed = true;
+              } else {
+                newMeta[file] = createdAt;
+                console.log('Added:', file);
+                changed = true;
+              }
+            }
+          }
+
+          // 孤立キーの検出
+          for (const key of Object.keys(oldMeta)) {
+            if (newMeta[key] === undefined) {
+              console.log('Removed:', key);
+              changed = true;
+            }
+          }
+
+          if (changed) {
+            fs.writeFileSync(jsonPath, JSON.stringify(newMeta, null, 2) + '\n');
+          } else {
+            console.log('No changes.');
+          }
+          "
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/content/diaries.json
+          git diff --staged --quiet || git commit -m "chore: update diary metadata"
+          git push

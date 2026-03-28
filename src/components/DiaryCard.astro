@@ -1,39 +1,20 @@
 ---
+import { formatDate } from '../lib/markdown';
+
 export interface Props {
-  id: number;
+  slug: string;
   title: string;
   createdAt: string;
-  tags?: string[];
-  status?: string;
-  showStatus?: boolean;
 }
 
-const { id, title, createdAt, tags = [], status, showStatus = false } = Astro.props;
-
-const formattedDate = new Date(createdAt).toLocaleDateString('ja-JP', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
-});
+const { slug, title, createdAt } = Astro.props;
 ---
 
 <article class="card">
   <h2 class="card-title">
-    <a href={`/${id}`}>{title}</a>
+    <a href={`/${slug}`}>{title}</a>
   </h2>
   <div class="card-meta">
-    <span>{formattedDate}</span>
-    {showStatus && status && (
-      <span class={`status-badge status-${status}`}>
-        {status === 'published' ? '公開' : '下書き'}
-      </span>
-    )}
+    <span>{formatDate(createdAt)}</span>
   </div>
-  {tags.length > 0 && (
-    <div class="tags mt-md">
-      {tags.map(tag => (
-        <a href={`/tag/${tag}`} class="tag">{tag}</a>
-      ))}
-    </div>
-  )}
 </article>
