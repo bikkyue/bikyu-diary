@@ -46,8 +46,6 @@ DiaryPage/
 │   │   │       └── [...key].ts            # 画像削除API
 │   │   └── images/
 │   │       └── [...path].ts               # 画像配信（dev用フォールバック）
-│   └── styles/
-│       └── global.css                     # グローバルCSS
 └── document/
     ├── screens/                           # 画面仕様
     │   ├── top.md                         # トップページ
