@@ -19,32 +19,77 @@ jobs:
         run: |
           node -e "
           const fs = require('fs');
+          const path = require('path');
 
           const jsonPath = 'src/content/diaries.json';
           const diariesDir = 'src/content/diaries';
 
-          const meta = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-          const files = fs.readdirSync(diariesDir).filter(f => f.endsWith('.md'));
+          const oldMeta = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 
-          // JST (UTC+9) で現在時刻を取得
+          // 再帰的に .md ファイルを収集
+          function walkDir(dir, base) {
+            let results = [];
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+              const full = path.join(dir, entry.name);
+              if (entry.isDirectory()) {
+                results = results.concat(walkDir(full, base));
+              } else if (entry.name.endsWith('.md')) {
+                results.push(path.relative(base, full));
+              }
+            }
+            return results;
+          }
+
+          const files = walkDir(diariesDir, diariesDir).sort();
+
+          // ファイル名 → 日付のルックアップ（移動対応）
+          const filenameToDate = {};
+          for (const [key, value] of Object.entries(oldMeta)) {
+            const basename = key.split('/').pop();
+            if (!filenameToDate[basename]) {
+              filenameToDate[basename] = value;
+            }
+          }
+
+          // JST で現在時刻
           const now = new Date();
           const jstOffset = 9 * 60 * 60 * 1000;
           const jst = new Date(now.getTime() + jstOffset);
           const createdAt = jst.toISOString().replace('Z', '+09:00');
 
+          // 新しいメタデータを構築
+          const newMeta = {};
           let changed = false;
+
           for (const file of files) {
-            if (!meta[file]) {
-              meta[file] = { created_at: createdAt };
+            if (oldMeta[file] !== undefined) {
+              newMeta[file] = oldMeta[file];
+            } else {
+              const basename = file.split('/').pop();
+              if (filenameToDate[basename]) {
+                newMeta[file] = filenameToDate[basename];
+                console.log('Moved (date preserved):', file);
+                changed = true;
+              } else {
+                newMeta[file] = createdAt;
+                console.log('Added:', file);
+                changed = true;
+              }
+            }
+          }
+
+          // 孤立キーの検出
+          for (const key of Object.keys(oldMeta)) {
+            if (newMeta[key] === undefined) {
+              console.log('Removed:', key);
               changed = true;
-              console.log('Added:', file);
             }
           }
 
           if (changed) {
-            fs.writeFileSync(jsonPath, JSON.stringify(meta, null, 2) + '\n');
+            fs.writeFileSync(jsonPath, JSON.stringify(newMeta, null, 2) + '\n');
           } else {
-            console.log('No new files.');
+            console.log('No changes.');
           }
           "
 
@@ -53,5 +98,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add src/content/diaries.json
-          git diff --staged --quiet || git commit -m "chore: add diary metadata"
+          git diff --staged --quiet || git commit -m "chore: update diary metadata"
           git push

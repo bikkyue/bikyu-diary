@@ -3,23 +3,45 @@ export const prerender = true;
 
 import Layout from '../components/Layout.astro';
 import DiaryCard from '../components/DiaryCard.astro';
-import { getAllDiaries } from '../lib/diary';
+import { getDiaryGroups } from '../lib/diary';
 
-const diaries = await getAllDiaries();
+const groups = await getDiaryGroups();
+const rootGroup = groups.find(g => g.directory === '');
+const dirGroups = groups.filter(g => g.directory !== '');
+const totalCount = groups.reduce((sum, g) => sum + g.diaries.length, 0);
 ---
 
 <Layout title="日記一覧">
-  <h1>日記</h1>
-
-  {diaries.length === 0 ? (
+  {totalCount === 0 ? (
     <p class="text-secondary">まだ日記がありません。</p>
   ) : (
-    diaries.map(diary => (
-      <DiaryCard
-        slug={diary.slug}
-        title={diary.title}
-        createdAt={diary.createdAt}
-      />
-    ))
+    <>
+      {rootGroup && rootGroup.diaries.map(diary => (
+        <DiaryCard
+          slug={diary.slug}
+          title={diary.title}
+          createdAt={diary.createdAt}
+        />
+      ))}
+
+      {dirGroups.map((group, i) => (
+        <details class="diary-group" open={i === 0}>
+          <summary class="diary-group-summary">
+            <span class="diary-group-arrow"></span>
+            <span class="diary-group-label">{group.directory}</span>
+            <span class="diary-group-count">{group.diaries.length}件</span>
+          </summary>
+          <div class="diary-group-content">
+            {group.diaries.map(diary => (
+              <DiaryCard
+                slug={diary.slug}
+                title={diary.title}
+                createdAt={diary.createdAt}
+              />
+            ))}
+          </div>
+        </details>
+      ))}
+    </>
   )}
 </Layout>

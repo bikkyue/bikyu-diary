@@ -260,6 +260,78 @@ input[type="file"] {
   margin-bottom: var(--spacing-sm);
 }
 
+/* アコーディオン（日記グループ） */
+.diary-group {
+  margin-bottom: var(--spacing-sm);
+}
+
+.diary-group-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.diary-group-summary:hover {
+  color: var(--color-text);
+}
+
+.diary-group-summary::-webkit-details-marker {
+  display: none;
+}
+
+.diary-group-arrow {
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+  font-size: 0.65rem;
+  transition: transform 0.25s ease;
+}
+
+.diary-group-arrow::before {
+  content: '▶';
+}
+
+.diary-group[open] .diary-group-arrow {
+  transform: rotate(90deg);
+}
+
+.diary-group-label {
+  flex-shrink: 0;
+}
+
+.diary-group-count {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  opacity: 0.6;
+}
+
+.diary-group-content {
+  animation: accordion-fade-in 0.25s ease;
+  padding: var(--spacing-xs) 0 var(--spacing-md);
+}
+
+@keyframes accordion-fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.diary-group-content .card {
+  margin-bottom: var(--spacing-sm);
+}
+
+.diary-group-content .card:last-child {
+  margin-bottom: 0;
+}
+
 /* 日記詳細ヘッダー */
 .diary-detail-header {
   margin-bottom: var(--spacing-xl);
