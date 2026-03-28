@@ -1,0 +1,57 @@
+name: Update Diary Metadata
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/content/diaries/**.md'
+
+jobs:
+  update-meta:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update diaries.json
+        run: |
+          node -e "
+          const fs = require('fs');
+
+          const jsonPath = 'src/content/diaries.json';
+          const diariesDir = 'src/content/diaries';
+
+          const meta = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+          const files = fs.readdirSync(diariesDir).filter(f => f.endsWith('.md'));
+
+          // JST (UTC+9) で現在時刻を取得
+          const now = new Date();
+          const jstOffset = 9 * 60 * 60 * 1000;
+          const jst = new Date(now.getTime() + jstOffset);
+          const createdAt = jst.toISOString().replace('Z', '+09:00');
+
+          let changed = false;
+          for (const file of files) {
+            if (!meta[file]) {
+              meta[file] = { created_at: createdAt };
+              changed = true;
+              console.log('Added:', file);
+            }
+          }
+
+          if (changed) {
+            fs.writeFileSync(jsonPath, JSON.stringify(meta, null, 2) + '\n');
+          } else {
+            console.log('No new files.');
+          }
+          "
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/content/diaries.json
+          git diff --staged --quiet || git commit -m "chore: add diary metadata"
+          git push

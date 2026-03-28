@@ -1,8 +1,6 @@
 /* DiaryPage - Global Styles */
-/* シンプル・ミニマルデザイン */
 
 :root {
-  /* カラー */
   --color-bg: #fafafa;
   --color-surface: #ffffff;
   --color-text: #1a1a1a;
@@ -11,9 +9,7 @@
   --color-primary: #2563eb;
   --color-primary-hover: #1d4ed8;
   --color-danger: #dc2626;
-  --color-success: #16a34a;
 
-  /* スペーシング */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -21,17 +17,14 @@
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
 
-  /* フォント */
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
 
-  /* その他 */
   --max-width: 800px;
   --border-radius: 8px;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* リセット */
 *,
 *::before,
 *::after {
@@ -54,14 +47,12 @@ body {
   min-height: 100vh;
 }
 
-/* レイアウト */
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
 }
 
-/* ヘッダー */
 header {
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
@@ -69,12 +60,6 @@ header {
   position: sticky;
   top: 0;
   z-index: 100;
-}
-
-header .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .site-title {
@@ -88,24 +73,11 @@ header .container {
   color: var(--color-primary);
 }
 
-nav a {
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  margin-left: var(--spacing-lg);
-  font-size: 0.9rem;
-}
-
-nav a:hover {
-  color: var(--color-primary);
-}
-
-/* メイン */
 main {
   padding: var(--spacing-2xl) 0;
   min-height: calc(100vh - 120px);
 }
 
-/* フッター */
 footer {
   text-align: center;
   padding: var(--spacing-xl) 0;
@@ -114,27 +86,15 @@ footer {
   border-top: 1px solid var(--color-border);
 }
 
-/* タイポグラフィ */
-h1,
-h2,
-h3,
-h4 {
+h1, h2, h3, h4 {
   font-weight: 600;
   line-height: 1.3;
   margin-bottom: var(--spacing-md);
 }
 
-h1 {
-  font-size: 2rem;
-}
-
-h2 {
-  font-size: 1.5rem;
-}
-
-h3 {
-  font-size: 1.25rem;
-}
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
 
 p {
   margin-bottom: var(--spacing-md);
@@ -180,32 +140,6 @@ a:hover {
 .card-meta {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
-  display: flex;
-  gap: var(--spacing-md);
-  flex-wrap: wrap;
-}
-
-/* タグ */
-.tag {
-  display: inline-block;
-  background: var(--color-bg);
-  color: var(--color-text-secondary);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: 4px;
-  font-size: 0.75rem;
-  text-decoration: none;
-}
-
-.tag:hover {
-  background: var(--color-primary);
-  color: white;
-  text-decoration: none;
-}
-
-.tags {
-  display: flex;
-  gap: var(--spacing-xs);
-  flex-wrap: wrap;
 }
 
 /* ボタン */
@@ -221,16 +155,6 @@ a:hover {
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.2s;
-}
-
-.btn-primary {
-  background: var(--color-primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--color-primary-hover);
-  text-decoration: none;
 }
 
 .btn-secondary {
@@ -265,10 +189,7 @@ label {
   font-weight: 500;
 }
 
-input[type="text"],
-input[type="file"],
-textarea,
-select {
+input[type="file"] {
   width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
   border: 1px solid var(--color-border);
@@ -276,20 +197,6 @@ select {
   font-size: 1rem;
   font-family: inherit;
   background: var(--color-surface);
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: var(--color-primary);
-}
-
-textarea {
-  min-height: 300px;
-  resize: vertical;
-  font-family: var(--font-mono);
-  line-height: 1.5;
 }
 
 /* マークダウンコンテンツ */
@@ -324,7 +231,7 @@ textarea {
   font-size: 0.9em;
 }
 
-.markdown-content :not(pre)>code {
+.markdown-content :not(pre) > code {
   background: var(--color-bg);
   padding: 0.2em 0.4em;
   border-radius: 4px;
@@ -353,25 +260,6 @@ textarea {
   margin-bottom: var(--spacing-sm);
 }
 
-/* ステータスバッジ */
-.status-badge {
-  display: inline-block;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.status-published {
-  background: #dcfce7;
-  color: var(--color-success);
-}
-
-.status-draft {
-  background: #fef3c7;
-  color: #d97706;
-}
-
 /* 日記詳細ヘッダー */
 .diary-detail-header {
   margin-bottom: var(--spacing-xl);
@@ -385,87 +273,22 @@ textarea {
   margin-bottom: var(--spacing-sm);
 }
 
-.diary-detail-header .card-meta {
-  margin-bottom: var(--spacing-sm);
-}
-
-/* 管理画面 */
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-xl);
-}
-
-.admin-actions {
-  display: flex;
-  gap: var(--spacing-sm);
-}
-
 /* ユーティリティ */
-.text-center {
-  text-align: center;
-}
-
-.text-secondary {
-  color: var(--color-text-secondary);
-}
-
-.mt-md {
-  margin-top: var(--spacing-md);
-}
-
-.mt-lg {
-  margin-top: var(--spacing-lg);
-}
-
-.mb-md {
-  margin-bottom: var(--spacing-md);
-}
-
-.mb-lg {
-  margin-bottom: var(--spacing-lg);
-}
+.text-center { text-align: center; }
+.text-secondary { color: var(--color-text-secondary); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
 
 /* レスポンシブ */
 @media (max-width: 768px) {
-  html {
-    font-size: 15px;
-  }
+  html { font-size: 15px; }
 
   .container {
     padding: 0 var(--spacing-md);
   }
 
-  h1 {
-    font-size: 1.75rem;
-  }
-
-  h2 {
-    font-size: 1.35rem;
-  }
-
-  header .container {
-    flex-direction: column;
-    gap: var(--spacing-sm);
-  }
-
-  nav a {
-    margin-left: var(--spacing-md);
-  }
-
-  nav a:first-child {
-    margin-left: 0;
-  }
-
-  .admin-header {
-    flex-direction: column;
-    gap: var(--spacing-md);
-    align-items: flex-start;
-  }
-
-  .card-meta {
-    flex-direction: column;
-    gap: var(--spacing-xs);
-  }
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.35rem; }
 }

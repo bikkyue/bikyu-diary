@@ -5,11 +5,11 @@ const runtime = Astro.locals.runtime;
 const bucket = runtime?.env?.BUCKET;
 
 if (!bucket) {
-  return Astro.redirect('/admin');
+  return Astro.redirect('/');
 }
 ---
 
-<Layout title="画像アップロード" isAdmin={true}>
+<Layout title="画像アップロード">
   <div class="card">
     <h1>画像アップロード</h1>
     
