@@ -51,11 +51,8 @@ DiaryPage/
     │   ├── top.md                         # トップページ
     │   ├── diary-detail.md                # 日記詳細
     │   └── admin-images.md                # 画像管理
-    ├── features/                          # 機能仕様
-    │   └── images.md                      # 画像機能
-    ├── requirements/                      # 要件定義
-    │   └── db-removal.md                  # DB廃止仕様
-    └── migration-plan.md                  # 移行計画
+    └── features/                          # 機能仕様
+        └── images.md                      # 画像機能
 ```
 
 ## 画面一覧
