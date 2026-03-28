@@ -51,11 +51,12 @@ jobs:
             }
           }
 
-          // JST で現在時刻
+          // JST で現在時刻（YYYY-MM-DD HH:mm:ss）
           const now = new Date();
           const jstOffset = 9 * 60 * 60 * 1000;
           const jst = new Date(now.getTime() + jstOffset);
-          const createdAt = jst.toISOString().replace('Z', '+09:00');
+          const pad = (n) => String(n).padStart(2, '0');
+          const createdAt = jst.getUTCFullYear() + '-' + pad(jst.getUTCMonth() + 1) + '-' + pad(jst.getUTCDate()) + ' ' + pad(jst.getUTCHours()) + ':' + pad(jst.getUTCMinutes()) + ':' + pad(jst.getUTCSeconds());
 
           // 新しいメタデータを構築
           const newMeta = {};

@@ -8,9 +8,7 @@ export function parseMarkdown(content: string): string {
 }
 
 export function formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    const [datePart] = dateString.split(' ');
+    const [year, month, day] = datePart.split('-').map(Number);
+    return `${year}年${month}月${day}日`;
 }
