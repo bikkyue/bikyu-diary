@@ -14,7 +14,7 @@ const { title, ogTitle, ogUrl, ogType } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | Diary</title>
+    <title>{title} | Bikyu-Diary</title>
     <link rel="stylesheet" href="/styles/global.css" />
 
     {ogTitle && ogUrl && ogType && (
@@ -22,7 +22,7 @@ const { title, ogTitle, ogUrl, ogType } = Astro.props;
         <meta property="og:title" content={ogTitle} />
         <meta property="og:url" content={ogUrl} />
         <meta property="og:type" content={ogType} />
-        <meta property="og:site_name" content="Diary" />
+        <meta property="og:site_name" content="Bikyu-Diary" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={ogTitle} />
       </>
@@ -31,7 +31,7 @@ const { title, ogTitle, ogUrl, ogType } = Astro.props;
   <body>
     <header>
       <div class="container">
-        <a href="/" class="site-title">Diary</a>
+        <a href="/" class="site-title">Bikyu-Diary</a>
       </div>
     </header>
 
@@ -43,7 +43,7 @@ const { title, ogTitle, ogUrl, ogType } = Astro.props;
 
     <footer>
       <div class="container">
-        <p>&copy; {new Date().getFullYear()} Diary</p>
+        <p>&copy; {new Date().getFullYear()} Bikyu-Diary</p>
       </div>
     </footer>
   </body>

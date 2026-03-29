@@ -76,6 +76,7 @@ header {
 main {
   padding: var(--spacing-2xl) 0;
   min-height: calc(100vh - 120px);
+  font-variant-numeric: tabular-nums;
 }
 
 footer {
@@ -335,8 +336,7 @@ input[type="file"] {
 /* 日記詳細ヘッダー */
 .diary-detail-header {
   margin-bottom: var(--spacing-xl);
-  padding-bottom: var(--spacing-xl);
-  padding-left: 1em;
+  padding: var(--spacing-md) 0 var(--spacing-md) 1em;
   border-left: 2px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
 }
