@@ -1,11 +1,11 @@
-name = "diary-page"
-compatibility_date = "2024-01-01"
-pages_build_output_dir = "./dist"
+name = "bikyu-diary"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+main = "./dist/_worker.js/index.js"
 
-[[d1_databases]]
-binding = "DB"
-database_name = "diary-db"
-database_id = "ff4036c9-8ab7-4fbf-a815-5ae11c3532d9"
+[assets]
+directory = "./dist"
+binding = "ASSETS"
 
 [[r2_buckets]]
 binding = "BUCKET"

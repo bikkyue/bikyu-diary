@@ -1,0 +1,40 @@
+---
+export const prerender = true;
+
+import Layout from '../components/Layout.astro';
+import { getAllDiaries, getDiaryBySlug } from '../lib/diary';
+import { parseMarkdown, formatDate } from '../lib/markdown';
+
+export async function getStaticPaths() {
+  const diaries = await getAllDiaries();
+  return diaries.map(diary => ({
+    params: { slug: diary.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const diary = await getDiaryBySlug(slug!);
+
+if (!diary) {
+  return Astro.redirect('/404');
+}
+
+const html = parseMarkdown(diary.body);
+const canonicalUrl = `${Astro.site ?? ''}/${diary.slug}`;
+---
+
+<Layout
+  title={diary.title}
+  ogTitle={diary.title}
+  ogUrl={canonicalUrl}
+  ogType="article"
+>
+  <div class="diary-detail-header">
+    <h1>{diary.title}</h1>
+    <div class="card-meta">
+      <span>{formatDate(diary.createdAt)}</span>
+    </div>
+  </div>
+
+  <div class="markdown-content" set:html={html} />
+</Layout>
