@@ -1,4 +1,4 @@
-# DiaryPage 仕様書
+# dairy ページ 仕様書
 
 ## 概要
 
