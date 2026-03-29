@@ -11,7 +11,7 @@
 ## トリガー条件
 
 - ブランチ: `main`
-- 対象パス: `src/content/diaries/**.md`（サブディレクトリ含む）
+- 対象パス: `src/content/diaries/**`（直下・サブディレクトリ含む全ファイル）
 
 ## diaries.json の形式
 

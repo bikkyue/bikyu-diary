@@ -59,6 +59,16 @@ describe("buildMeta", () => {
       expect(newMeta["2026-03/新しい日記.md"]).toBe(NOW);
       expect(changed).toBe(true);
     });
+
+    it("ルート直下のファイル追加で新規エントリが作成される", () => {
+      const oldMeta = { "テスト日記.md": "2026-03-28 00:00:00" };
+      const files = ["テスト日記.md", "20260317.md"];
+
+      const { newMeta, changed } = buildMeta(oldMeta, files, NOW);
+
+      expect(newMeta["20260317.md"]).toBe(NOW);
+      expect(changed).toBe(true);
+    });
   });
 
   describe("孤立エントリの削除", () => {
