@@ -20,7 +20,7 @@ const totalCount = groups.reduce((sum, g) => sum + g.diaries.length, 0);
         <DiaryCard
           slug={diary.slug}
           title={diary.title}
-          createdAt={diary.createdAt}
+          created_at={diary.created_at}
         />
       ))}
 
@@ -36,7 +36,7 @@ const totalCount = groups.reduce((sum, g) => sum + g.diaries.length, 0);
               <DiaryCard
                 slug={diary.slug}
                 title={diary.title}
-                createdAt={diary.createdAt}
+                created_at={diary.created_at}
               />
             ))}
           </div>
