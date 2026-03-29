@@ -29,7 +29,7 @@ const totalCount = groups.reduce((sum, g) => sum + g.diaries.length, 0);
           <summary class="diary-group-summary">
             <span class="diary-group-arrow"></span>
             <span class="diary-group-label">{group.directory}</span>
-            <span class="diary-group-count">{group.diaries.length}件</span>
+            <span class="diary-group-count">({group.diaries.length})</span>
           </summary>
           <div class="diary-group-content">
             {group.diaries.map(diary => (
