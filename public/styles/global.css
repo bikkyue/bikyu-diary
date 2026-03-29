@@ -305,6 +305,7 @@ input[type="file"] {
 
 .diary-group-label {
   flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .diary-group-count {
