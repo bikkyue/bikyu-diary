@@ -8,7 +8,8 @@ export function parseMarkdown(content: string): string {
 }
 
 export function formatDate(dateString: string): string {
-    const [datePart] = dateString.split(' ');
-    const [year, month, day] = datePart.split('-').map(Number);
-    return `${year}年${month}月${day}日`;
+    const [datePart, timePart] = dateString.split(' ');
+    const [yyyy, mm, dd] = datePart.split('-');
+    const [hh, min] = (timePart ?? '00:00').split(':');
+    return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
 }
