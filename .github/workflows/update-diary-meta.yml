@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'src/content/diaries/**.md'
+      - 'src/content/diaries/**'
 
 jobs:
   update-meta:
