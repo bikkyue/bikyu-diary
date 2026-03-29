@@ -24,7 +24,7 @@
 
 ### ヘッダー
 
-- サイトタイトル「Diary」（トップページへのリンク）
+- サイトタイトル「Bikyu-Diary」（トップページへのリンク）
 
 ### メインコンテンツ
 
@@ -37,7 +37,7 @@
 
 ### フッター
 
-- コピーライト「© {年} Diary」
+- コピーライト「© {年} Bikyu-Diary」
 
 ## OGPメタタグ
 
@@ -48,7 +48,7 @@
 | `og:title` | 日記タイトル |
 | `og:url` | `{サイトURL}/{slug}` |
 | `og:type` | `article` |
-| `og:site_name` | `Diary` |
+| `og:site_name` | `Bikyu-Diary` |
 | `twitter:card` | `summary` |
 | `twitter:title` | 日記タイトル |
 
