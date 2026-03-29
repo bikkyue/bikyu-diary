@@ -4,10 +4,10 @@ import { formatDate } from '../lib/markdown';
 export interface Props {
   slug: string;
   title: string;
-  createdAt: string;
+  created_at: string;
 }
 
-const { slug, title, createdAt } = Astro.props;
+const { slug, title, created_at } = Astro.props;
 ---
 
 <article class="card">
@@ -15,6 +15,6 @@ const { slug, title, createdAt } = Astro.props;
     <a href={`/${slug}`}>{title}</a>
   </h2>
   <div class="card-meta">
-    <span>{formatDate(createdAt)}</span>
+    <span>{formatDate(created_at)}</span>
   </div>
 </article>

@@ -3,45 +3,64 @@ import path from "path";
 
 /**
  * 日記メタデータの更新ロジック
- * @param {Object} oldMeta - 既存の diaries.json の内容
- * @param {string[]} files - diariesDir からの相対パス一覧（.md ファイル）
- * @param {string} createdAt - 新規ファイルに付与する JST 日時文字列
+ * @param {Object} oldMeta - 既存の diaries.json の内容 { id: { path, created_at } }
+ * @param {string[]} files - diariesDir からの相対パス一覧（.md ファイル、NFC 正規化済み）
+ * @param {string} created_at - 新規ファイルに付与する JST 日時文字列
  * @returns {{ newMeta: Object, changed: boolean }}
  */
-export function buildMeta(oldMeta, files, createdAt) {
-  // ファイル名 → 日付のルックアップ（移動対応）
-  const filenameToDate = {};
-  for (const [key, value] of Object.entries(oldMeta)) {
-    const basename = key.split("/").pop();
-    if (!filenameToDate[basename]) {
-      filenameToDate[basename] = value;
+export function buildMeta(oldMeta, files, created_at) {
+  // 既存エントリの逆引きマップ構築
+  const pathToId = {}; // NFC path → id
+  const basenameToEntry = {}; // basename → { id, created_at }（先勝ち）
+  let maxId = 0;
+
+  for (const [id, entry] of Object.entries(oldMeta)) {
+    const numId = Number(id);
+    if (numId > maxId) maxId = numId;
+
+    const normalizedPath = entry.path.normalize("NFC");
+    pathToId[normalizedPath] = id;
+
+    const basename = entry.path.split("/").pop();
+    if (!basenameToEntry[basename]) {
+      basenameToEntry[basename] = { id, created_at: entry.created_at };
     }
   }
 
   const newMeta = {};
   let changed = false;
+  const usedIds = new Set();
 
   for (const file of files.sort()) {
-    if (oldMeta[file] !== undefined) {
-      // 優先度1: 相対パスが一致 → そのまま保持
-      newMeta[file] = oldMeta[file];
+    const normalizedFile = file.normalize("NFC");
+
+    if (pathToId[normalizedFile] !== undefined) {
+      // 優先度1: パス完全一致 → 既存IDと日付を保持
+      const id = pathToId[normalizedFile];
+      newMeta[id] = { path: file, created_at: oldMeta[id].created_at };
+      usedIds.add(id);
     } else {
       const basename = file.split("/").pop();
-      if (filenameToDate[basename]) {
-        // 優先度2: ファイル名一致 → 日付引き継ぎ
-        newMeta[file] = filenameToDate[basename];
+      const existing = basenameToEntry[basename];
+      if (existing && !usedIds.has(existing.id)) {
+        // 優先度2: basename 一致（移動検出）→ 既存IDと日付を引き継ぎ
+        newMeta[existing.id] = { path: file, created_at: existing.created_at };
+        usedIds.add(existing.id);
         changed = true;
       } else {
-        // 優先度3: 新規ファイル → 現在時刻
-        newMeta[file] = createdAt;
+        // 優先度3: 新規 → 次のIDを採番
+        maxId += 1;
+        const newId = String(maxId);
+        newMeta[newId] = { path: file, created_at };
+        usedIds.add(newId);
         changed = true;
       }
     }
   }
 
-  // 孤立エントリの検出
-  for (const key of Object.keys(oldMeta)) {
-    if (newMeta[key] === undefined) {
+  // 孤立エントリの検出（削除されたファイル）
+  for (const id of Object.keys(oldMeta)) {
+    if (!usedIds.has(id)) {
       changed = true;
     }
   }
@@ -72,7 +91,7 @@ export function jstNow(date = new Date()) {
 }
 
 /**
- * ディレクトリを再帰的に走査し .md ファイルの相対パスを返す
+ * ディレクトリを再帰的に走査し .md ファイルの相対パスを返す（NFC 正規化済み）
  */
 export function walkDir(dir, base) {
   let results = [];
@@ -81,7 +100,7 @@ export function walkDir(dir, base) {
     if (entry.isDirectory()) {
       results = results.concat(walkDir(full, base));
     } else if (entry.name.endsWith(".md")) {
-      results.push(path.relative(base, full));
+      results.push(path.relative(base, full).normalize("NFC"));
     }
   }
   return results;
