@@ -76,6 +76,7 @@ header {
 main {
   padding: var(--spacing-2xl) 0;
   min-height: calc(100vh - 120px);
+  font-variant-numeric: tabular-nums;
 }
 
 footer {
@@ -305,7 +306,6 @@ input[type="file"] {
 
 .diary-group-label {
   flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
 }
 
 .diary-group-count {
