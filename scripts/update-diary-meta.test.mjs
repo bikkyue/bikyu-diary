@@ -47,7 +47,38 @@ describe("buildMeta", () => {
     });
   });
 
-  describe("優先度3: 新規ファイル → 新しいIDを採番して現在時刻付与", () => {
+  describe("優先度3: 日付プレフィックス一致（改名検出）→ IDと日付引き継ぎ", () => {
+    it("ファイル名が変わっても日付プレフィックスが同じならIDが保持される", () => {
+      const oldMeta = {
+        "1": { path: "20260317-お仕事あれこれ20260317.md", created_at: "2026-03-17 23:37:01" },
+      };
+      const files = ["20260317-お仕事あれこれ.md"];
+
+      const { newMeta, changed } = buildMeta(oldMeta, files, NOW);
+
+      expect(newMeta["1"]).toEqual({ path: "20260317-お仕事あれこれ.md", created_at: "2026-03-17 23:37:01" });
+      expect(newMeta["2"]).toBeUndefined();
+      expect(changed).toBe(true);
+    });
+
+    it("削除+改名が同時に起きた場合、日付プレフィックスで先勝ち", () => {
+      const oldMeta = {
+        "37": { path: "20260317-お仕事あれこれ20260317.md", created_at: "2026-03-17 23:37:01" },
+        "38": { path: "20260317.md", created_at: "2026-03-17 23:37:01" },
+      };
+      const files = ["20260317-お仕事あれこれ.md"];
+
+      const { newMeta, changed } = buildMeta(oldMeta, files, NOW);
+
+      // ID 37 が先勝ちで引き継がれる
+      expect(newMeta["37"]).toEqual({ path: "20260317-お仕事あれこれ.md", created_at: "2026-03-17 23:37:01" });
+      expect(newMeta["38"]).toBeUndefined();
+      expect(newMeta["39"]).toBeUndefined();
+      expect(changed).toBe(true);
+    });
+  });
+
+  describe("優先度4: 新規ファイル → 新しいIDを採番して現在時刻付与", () => {
     it("旧JSONに存在しないファイルには新IDと現在時刻が付与される", () => {
       const oldMeta = {};
       const files = ["2026-03/新しい日記.md"];

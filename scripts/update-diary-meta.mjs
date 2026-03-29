@@ -12,6 +12,7 @@ export function buildMeta(oldMeta, files, created_at) {
   // 既存エントリの逆引きマップ構築
   const pathToId = {}; // NFC path → id
   const basenameToEntry = {}; // basename → { id, created_at }（先勝ち）
+  const datePrefixToEntry = {}; // YYYYMMDD → { id, created_at }（先勝ち）
   let maxId = 0;
 
   for (const [id, entry] of Object.entries(oldMeta)) {
@@ -24,6 +25,11 @@ export function buildMeta(oldMeta, files, created_at) {
     const basename = entry.path.split("/").pop();
     if (!basenameToEntry[basename]) {
       basenameToEntry[basename] = { id, created_at: entry.created_at };
+    }
+
+    const dateMatch = basename.match(/^(\d{8})/);
+    if (dateMatch && !datePrefixToEntry[dateMatch[1]]) {
+      datePrefixToEntry[dateMatch[1]] = { id, created_at: entry.created_at };
     }
   }
 
@@ -48,12 +54,21 @@ export function buildMeta(oldMeta, files, created_at) {
         usedIds.add(existing.id);
         changed = true;
       } else {
-        // 優先度3: 新規 → 次のIDを採番
-        maxId += 1;
-        const newId = String(maxId);
-        newMeta[newId] = { path: file, created_at };
-        usedIds.add(newId);
-        changed = true;
+        // 優先度3: 日付プレフィックス一致（改名検出）→ 既存IDと日付を引き継ぎ
+        const dateMatch = basename.match(/^(\d{8})/);
+        const byDate = dateMatch && datePrefixToEntry[dateMatch[1]];
+        if (byDate && !usedIds.has(byDate.id)) {
+          newMeta[byDate.id] = { path: file, created_at: byDate.created_at };
+          usedIds.add(byDate.id);
+          changed = true;
+        } else {
+          // 優先度4: 新規 → 次のIDを採番
+          maxId += 1;
+          const newId = String(maxId);
+          newMeta[newId] = { path: file, created_at };
+          usedIds.add(newId);
+          changed = true;
+        }
       }
     }
   }
