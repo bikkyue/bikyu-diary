@@ -5,7 +5,7 @@
 | 項目 | 内容 |
 |------|------|
 | URL | `/{slug}` |
-| ファイル | `src/pages/[slug].astro` |
+| ファイル | `src/pages/[...slug].astro` |
 | レンダリング | 静的生成（`prerender: true` + `getStaticPaths`） |
 | 認証 | 不要（公開ページ） |
 
@@ -16,9 +16,11 @@
 ## ルーティング
 
 - `getStaticPaths()` で全日記のslugからルートを生成
-- slugは日記ファイル名（拡張子なし）
-  - 例: `テスト日記.md` → `/{テスト日記}`
-- 存在しないslugは404にリダイレクト
+- slugは日記ファイルの相対パス（拡張子なし）
+  - ルート直下: `{ファイル名}` → `/{ファイル名}`
+  - サブディレクトリ: `{ディレクトリ}/{ファイル名}` → `/{ディレクトリ}/{ファイル名}`
+  - 例: `202601/20260110-日記を書く。.md` → `/202601/20260110-日記を書く。`
+- 存在しないslugは `/404` にリダイレクト
 
 ## 画面構成
 
@@ -34,6 +36,7 @@
 - 本文（`markdown-content` クラス）
   - Markdownから変換されたHTML
   - GFM（GitHub Flavored Markdown）対応
+- 「← 一覧に戻る」ボタン（`/` へ遷移）
 
 ### フッター
 
@@ -62,7 +65,7 @@
 
 | ファイル | 説明 |
 |---------|------|
-| `src/pages/[slug].astro` | 日記詳細ページ |
+| `src/pages/[...slug].astro` | 日記詳細ページ |
 | `src/components/Layout.astro` | 共通レイアウト（OGPタグ出力含む） |
 | `src/lib/diary.ts` | 日記データ取得関数 |
 | `src/lib/markdown.ts` | Markdown変換・日付フォーマット関数 |
