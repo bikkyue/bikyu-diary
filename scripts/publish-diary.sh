@@ -23,6 +23,10 @@ while IFS=$'\t' read -r status old new; do
       rel="${old#$DIARIES_PREFIX}"
       MSG="${MSG}delete diary: ${rel}"$'\n'
       ;;
+    M)
+      rel="${old#$DIARIES_PREFIX}"
+      MSG="${MSG}update diary: ${rel}"$'\n'
+      ;;
     R*)
       old_rel="${old#$DIARIES_PREFIX}"
       new_rel="${new#$DIARIES_PREFIX}"
